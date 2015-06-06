@@ -2,7 +2,6 @@ package com.frank.leetcode;
 
 import java.util.HashMap;
 
-import sun.security.util.Length;
 
 /*
  * Given a string, 
