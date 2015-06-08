@@ -50,8 +50,6 @@ public class L10RegMatch {
 			}
 			if (s0 == p0 || (p0 == '.' && !s.equals("")))
 				return match_core(s.substring(1), p.substring(1));
-
-			
 		}
 		return false;
 	}
