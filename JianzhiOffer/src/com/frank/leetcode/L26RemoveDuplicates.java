@@ -1,7 +1,5 @@
 package com.frank.leetcode;
 
-import java.util.HashSet;
-import java.util.Set;
 
 /*
  * Given a sorted array, 
