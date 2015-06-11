@@ -23,12 +23,15 @@ public class L26RemoveDuplicates {
 		int lens=nums.length;
 		int newsize=1;
 		int curr=nums[0];
+		int new_ind=1;
 		for(int j=1;j<lens;j++){
 			if(curr==nums[j])
 				continue;
 			else{
 				curr=nums[j];
+				nums[new_ind]=curr;
 				newsize++;
+				new_ind++;
 			}
 			
 		}
