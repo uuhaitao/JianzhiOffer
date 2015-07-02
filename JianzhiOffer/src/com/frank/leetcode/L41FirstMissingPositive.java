@@ -10,7 +10,7 @@ public class L41FirstMissingPositive {
 			return 1;
 		int num=1;
 		for(int i=0;i<len;i++){
-			if()
+			
 		}
 		return 1;
 	}
