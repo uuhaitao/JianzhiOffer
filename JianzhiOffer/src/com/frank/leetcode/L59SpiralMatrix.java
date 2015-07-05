@@ -63,8 +63,8 @@ public class L59SpiralMatrix {
 	}
 
 	public static void main(String[] args) {
-		int a=1;
-		int res[][]=new L59SpiralMatrix().generateMatrix(1);
+//		int a=1;
+//		int res[][]=new L59SpiralMatrix().generateMatrix(1);
 		System.out.println();
 	}
 }

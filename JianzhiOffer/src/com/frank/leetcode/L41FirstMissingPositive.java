@@ -1,6 +1,5 @@
 package com.frank.leetcode;
 
-import java.util.Arrays;
 
 public class L41FirstMissingPositive {
 	public int firstMissingPositive(int[] nums) {
