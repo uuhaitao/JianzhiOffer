@@ -2,14 +2,7 @@ package com.frank.leetcode;
 
 public class L19RemoveNthNode {
 
-	public class ListNode {
-		int val;
-		ListNode next;
 
-		ListNode(int x) {
-			val = x;
-		}
-	}
 
 	public ListNode removeNthFromEnd(ListNode head, int n) {
 		if (head.next == null)
