@@ -1,57 +1,59 @@
 package com.frank.leetcode;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class L76MinimumWindowSubstring {
 	public String minWindow(String s, String t) {
-		if (s.length() < t.length())
+		if (t.equals("") || s.length() < t.length())
 			return "";
 		String res = "";
 
-		int len1 = s.length();
-		int len2 = t.length();
-		int minlen = len1 + 1;
-		Map<Character, Integer> map = new HashMap<Character, Integer>();
-		int slow = -1;
-		int quick = -1;
-		for (int i = 0; i < len1; i++) {
-			char a = s.charAt(i);
-			if (t.indexOf(a) >= 0) {
-				quick = i;
-				if (map.containsKey(a)) {
-					int ind = map.get(a);
-					map.put(a, i);
-					if (ind == slow)
-						slow = getmin(map);
-					if (map.size() == len2 && quick - slow + 1 < minlen) {
-						res = s.substring(slow, quick + 1);
+		int num = 0;
+		int left=0;
+		int right=0;
+		int minlen = s.length() + 1;
+		int required[] = new int[256];
+		int has[] = new int[256];
+		for (int i = 0; i < t.length(); i++) {
+			required[t.charAt(i)]++;
+		}
+		for (int i = 0, j = 0; i < s.length(); i++) {
+			int val = s.charAt(i);
+				if(num<t.length())
+				{
+					if(has[val]<required[val])
+						num++;
+					has[val]++;
+				}
+				
+				if(num==t.length())
+				{
+					while(j<=i && has[s.charAt(j)]-1>=required[s.charAt(j)])
+					{
+						has[s.charAt(j)]--;
+						j++;
 					}
-				} else {
-					map.put(a, i);
-
-					if (slow == -1)
-						slow = i;
-					if (map.size() == len2 && quick - slow + 1 < minlen) {
-						res = s.substring(slow, quick + 1);
+					int tmplen=i-j+1;
+					if(minlen>tmplen)
+					{
+						minlen=tmplen;
+						left=j;
+						right=i;
+					}
+					while(j<=i&&num==t.length())
+					{
+						has[s.charAt(j)]--;
+						if(has[s.charAt(j)]<required[s.charAt(j)])
+							num--;
+						j++;
 					}
 				}
 			}
-		}
-		return res;
-	}
-
-	int getmin(Map<Character, Integer> map) {
-		int min = Integer.MAX_VALUE;
-		for (Integer e : map.values()) {
-			if (e < min)
-				min = e;
-		}
-		return min;
+		res=s.substring(left, right+1);
+		
+		return minlen==s.length()+1?"":res;
 	}
 
 	public static void main(String[] args) {
-		String s = new L76MinimumWindowSubstring().minWindow("abbbbbdbca", "adb");
+		String s = new L76MinimumWindowSubstring().minWindow("abbbadc","bd");
 		System.out.println(s);
 	}
 }
