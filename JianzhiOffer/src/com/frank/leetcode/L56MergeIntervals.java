@@ -10,14 +10,14 @@ public class L56MergeIntervals {
 			if (intervals.size() == 0)
 				return res;
 
-			intervals.sort(new Comparator<Interval>() {
-				@Override
-				public int compare(Interval o1, Interval o2) {
-					if (o1.start == o2.start)
-						return o1.end - o2.end;
-					return o1.start - o2.start;
-				}
-			});
+//			intervals.sort(new Comparator<Interval>() {
+//				@Override
+//				public int compare(Interval o1, Interval o2) {
+//					if (o1.start == o2.start)
+//						return o1.end - o2.end;
+//					return o1.start - o2.start;
+//				}
+//			});
 			int len=intervals.size();
 			Interval pre=intervals.get(0);
 			for(int i=1;i<len;i++){
