@@ -1,7 +1,29 @@
-GET _search
+GET /megacorp/employee/_search
 {
    
 }
+
+--sort
+GET /megacorp/employee/_search?_source=age
+{
+    "sort": {
+        "age": { 
+            "order": "desc"     
+        } 
+    }
+}
+
+--query string
+GET /megacorp/employee/_search?q=age:[40 TO *]
+GET /megacorp/employee/_search?q=last_name:Smith&age:<30
+
+GET /megacorp/employee/_search?sort=age:desc&mode=min
+
+
+--query the mapping
+GET /megacorp/_mapping/employee
+
+
 
 PUT /megacorp/employee/1
 {
@@ -10,6 +32,41 @@ PUT /megacorp/employee/1
     "age" :        25,
     "about" :      "I love to go rock climbing",
     "interests": [ "sports", "music" ]
+}
+
+GET /megacorp/employee/4
+--aggregate the max age
+GET /megacorp/employee/_search?_source=age
+{
+    "aggs" : {
+        "max_age" : {
+            "max" : {
+                "field" : "age"
+                } 
+        }
+    }
+}
+
+--get the maxmuim age
+GET /megacorp/employee/_search?sort=age:desc&size=1&_source=age
+
+GET /megacorp/employee/_search?q=age:>30&q=last_name:Liu
+GET /megacorp/employee/_search?q=last_name:Liu
+POST /megacorp/_mapping/employee/4/_update
+
+
+GET /megacorp/employee/_search?f=age:exists
+GET /megacorp/employee/_search
+
+DELETE  /megacorp/employee/AU7KCSDHPlMQtRQSSAF4
+DELETE  /megacorp/employee/AU7KCb9UPlMQtRQSSAF5
+
+POST /megacorp/employee/_update
+{
+     "doc" : {
+      "age":50
+   }
+   
 }
 
 PUT /megacorp/employee/2
@@ -38,9 +95,12 @@ PUT /megacorp/employee/4
     "interests":  [ "reading" ]
 }
 
+HEAD /megacorp/employee/5
 
-GET /megacorp/employee/1
-GET /megacorp/employee/3
+GET /megacorp/employee/_search?q=age:<30&last_name:Liu
+GET /megacorp/employee/4
+GET /megacorp/employee/3?_source=age,about
+GET /megacorp/employee/3/_source
 
 GET /megacorp/_mapping/employee
 
@@ -142,6 +202,7 @@ GET /megacorp/employee/_search
   }
 }
 
+--agg in agg
 GET /megacorp/employee/_search
 {
     "aggs" : {
@@ -156,39 +217,187 @@ GET /megacorp/employee/_search
     }
 }
 
+PUT /website/blog/123
+{
+  "title": "My first blog entry",
+  "text":  "I am starting to get the hang of this...",
+  "date":  "2014/01/02"
+}
+DELETE /website/blog/123
+
+PUT /website/blog/123/_create
+{ 
+}
+
+GET /website/blog/123
+
+--partial update
+POST /website/blog/123/_update
+{
+   "doc" : {
+      "tags" : [ "testing" ],
+      "views": 111
+   }
+}
+--partial update with scripts
+POST /website/blog/123/_update
+{
+   "script" : "ctx._source.tags+=new_tag",
+   "params" : {
+      "new_tag" : "search"
+   }
+}
+
+--mget
+GET /_mget
+{
+   "docs" : [
+      {
+         "_index" : "website",
+         "_type" :  "blog",
+         "_id" :    2
+      },
+      {
+         "_index" : "website",
+         "_type" :  "pageviews",
+         "_id" :    1,
+         "_source": "views"
+      }
+   ]
+}
+
+POST /_bulk
+{ "delete": { "_index": "website", "_type": "blog", "_id": "123" }} 
+{ "create": { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "title":    "My first blog post" }
+{ "index":  { "_index": "website", "_type": "blog" }}
+{ "title":    "My second blog post" }
+{ "update": { "_index": "website", "_type": "blog", "_id": "123", "_retry_on_conflict" : 3} }
+{ "doc" : {"title" : "My updated blog post"} }
+
+GET /website/blog/_search
+
+--check the cluster status
+GET /_cluster/health
+
+--version control sample
+PUT /website/blog/1/_create
+{
+  "title": "My first blog entry",
+  "text":  "Just trying this out..."
+}
+GET /website/blog/1
+PUT /website/blog/1?version=1 
+{
+  "title": "My first blog entry",
+  "text":  "Starting to get the hang of this..."
+}
+--throw a version conflict exception
+PUT /website/blog/1?version=1 
+{
+  "title": "My first blog entry",
+  "text":  "Starting to get the hang of this..."
+}
 
 
+--use a external version
+PUT /website/blog/2?version=5&version_type=external
+{
+  "title": "My first external blog entry",
+  "text":  "Starting to get the hang of this..."
+}
+PUT /website/blog/2?version=6&version_type=external
+{
+  "title": "My first external blog entry",
+  "text":  "Starting to get the hang of this..."
+}
+GET /website/blog/2
 
+GET /_analyze?analyzer=standard
+{
+    I-Am-happy, Fuck You.
+}
 
+--create a mapping
+PUT /gb 
+{
+  "mappings": {
+    "tweet" : {
+      "properties" : {
+        "tweet" : {
+          "type" :    "string",
+          "analyzer": "english"
+        },
+        "date" : {
+          "type" :   "date"
+        },
+        "name" : {
+          "type" :   "string"
+        },
+        "user_id" : {
+          "type" :   "long"
+        }
+      }
+    }
+  }
+}
+--update a mapping
+PUT /gb/_mapping/tweet
+{
+    "properties":{
+        "tag":{
+            "type" : "string",
+            "index": "not_analyzed"
+        }
+    }
+}
 
+GET /gb/_mapping/tweet
+--test the mapping
+GET /gb/_analyze?field=tweet
+{
+    Black-cats
+}
 
+GET /gb/_analyze?field=tag
+{Black-cats}
 
+GET /test/type1/1
 
+PUT /test/type1/1
+{
+    "counter" : 1,
+    "tags" : ["red"]
+}
 
+POST /test/type1/1/_update 
+{
+    "script" : "ctx._source.name_of_new_field = value_of_new_field"
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+GET /test/type1/_search
+PUT /test/type1/2
+{
+    "counter" : 2,
+    "tags" : ["red"]
+}
+PUT /test/type1/3
+{
+    "counter" : 20,
+    "tags" : ["red"]
+}
+POST /test/type1/1/_update
+{
+    "doc" : {
+        "name" : "new_name"
+    }
+}
+POST /test/type1/1/_update
+{
+    "doc" : {
+        "name" : "hello new name"
+    }
+}
 
 
 
