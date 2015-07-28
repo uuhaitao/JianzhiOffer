@@ -63,7 +63,6 @@ public class L211AddandSearchWord {
         if(world.length()==0)
             return  node.isLeaf;
         Map<Character,SearchTree> map=node.map;
-        SearchTree n=null;
         char c=world.charAt(0);
         if (c=='.')
         {
